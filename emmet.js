@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
     "use strict";
     main.consumes = [
-        "commands", "menus", "ace"
+        "Plugin", "commands", "menus", "ace"
     ];
     main.provides = ["emmet"];
     return main;
@@ -9,7 +9,11 @@ define(function(require, exports, module) {
     function main(options, imports, register) {
         var Plugin = imports.Plugin;
         var commands = imports.commands;
-        var menus    = imports.menus;
+        var menus = imports.menus;
+        
+        var emmetExt = require("ace/ext/emmet");
+        emmetExt.setCore("lib/emmet/emmet");
+        emmetExt.updateCommands = function() {};
         
         /***** Initialization *****/
         
@@ -22,40 +26,41 @@ define(function(require, exports, module) {
             loaded = true;
             
             var keymap = {
-                expand_abbreviation: {"mac": "ctrl+alt+e", "win": "ctrl+alt+e"},
-                match_pair_outward: {}, // {"mac": "ctrl+d", "win": "ctrl+,"},
-                match_pair_inward: {}, // {"mac": "ctrl+j", "win": "ctrl+shift+0"},
-                matching_pair:  {}, // {"mac": "ctrl+alt+j", "win": "alt+j"},
+                expand_abbreviation: {mac: "ctrl+alt+e", win: "ctrl+alt+e"},
+                match_pair_outward: {}, // {mac: "ctrl+d", win: "ctrl+,"},
+                match_pair_inward: {}, // {mac: "ctrl+j", win: "ctrl+shift+0"},
+                matching_pair:  {}, // {mac: "ctrl+alt+j", win: "alt+j"},
                 next_edit_point:  {}, // "alt+right",
                 prev_edit_point:  {}, // "alt+left",
-                toggle_comment: {"mac": "command+/", "win": "ctrl+/"},
-                split_join_tag:  {}, // {"mac": "shift+command+'", "win": "shift+ctrl+`"},
-                remove_tag:  {}, // {"mac": "command+'", "win": "shift+ctrl+;"},
-                evaluate_math_expression:  {}, // {"mac": "shift+command+y", "win": "shift+ctrl+y"},
+                toggle_comment: {mac: "command+/", win: "ctrl+/"},
+                split_join_tag:  {}, // {mac: "shift+command+'", win: "shift+ctrl+`"},
+                remove_tag:  {}, // {mac: "command+'", win: "shift+ctrl+;"},
+                evaluate_math_expression:  {mac: "shift+command+y", win: "shift+ctrl+y"},
                 increment_number_by_1:  {}, // "ctrl+up",
                 decrement_number_by_1:  {}, // "ctrl+down",
                 increment_number_by_01:  {}, // "alt+up",
                 decrement_number_by_01:  {}, // "alt+down",
-                increment_number_by_10:  {}, // {"mac": "alt+command+up", "win": "shift+alt+up"},
-                decrement_number_by_10:  {}, // {"mac": "alt+command+down", "win": "shift+alt+down"},
-                select_next_item:  {}, // {"mac": "shift+command+.", "win": "shift+ctrl+."},
-                select_previous_item:  {}, // {"mac": "shift+command+,", "win": "shift+ctrl+,"},
-                reflect_css_value:  {}, // {"mac": "shift+command+r", "win": "shift+ctrl+r"},
+                increment_number_by_10:  {}, // {mac: "alt+command+up", win: "shift+alt+up"},
+                decrement_number_by_10:  {}, // {mac: "alt+command+down", win: "shift+alt+down"},
+                select_next_item: {mac: "shift+command+.", win: "shift+ctrl+."},
+                select_previous_item: {mac: "shift+command+,", win: "shift+ctrl+,"},
+                reflect_css_value:  {}, // {mac: "shift+command+r", win: "shift+ctrl+r"},
                 
-                encode_decode_data_url:  {}, // {"mac": "shift+ctrl+d", "win": "ctrl+'"},
-                // update_image_size: {"mac": "shift+ctrl+i", "win": "ctrl+u"},
+                // encode_decode_data_url:  {}, // {mac: "shift+ctrl+d", win: "ctrl+'"},
+                // update_image_size: {mac: "shift+ctrl+i", win: "ctrl+u"},
                 // expand_as_you_type: "ctrl+alt+enter",
-                // wrap_as_you_type: {"mac": "shift+ctrl+g", "win": "shift+ctrl+g"},
-                expand_abbreviation_with_tab: "Tab",
-                wrap_with_abbreviation: {"mac": "shift+ctrl+a", "win": "shift+ctrl+a"}
+                // wrap_as_you_type: {mac: "shift+ctrl+g", win: "shift+ctrl+g"},
+                expand_abbreviation_with_tab: {mac: "Tab", win: "Tab"},
+                wrap_with_abbreviation: {mac: "shift+ctrl+a", win: "shift+ctrl+a"}
             };
             
             for (var i in keymap) {
                 commands.addCommand({
                     name: i,
+                    action: i,
                     group: "emmet",
                     bindKey: keymap[i],
-                    exec: execEmmetCommand,
+                    exec: emmetExt.runEmmetCommand,
                     isAvailable: isAvailable,
                     findEditor: findEditor
                 }, plugin);
@@ -78,10 +83,6 @@ define(function(require, exports, module) {
             draw();
         }
         
-        function execEmmetCommand(editor, arg) {
-            this.name;
-        }
-        
         function isAvailable(editor, args, event) {
             if (!editor || !editor.ace) return false;
             
@@ -90,7 +91,7 @@ define(function(require, exports, module) {
             if (event instanceof KeyboardEvent && (!editor.ace.isFocused()))
                 return false;
             
-            return isAvailable ? isAvailable(editor.ace) : true;
+            return emmetExt.isSupportedMode(editor.ace.session.$modeId);
         }
     
         function findEditor(editor) {
@@ -124,7 +125,7 @@ define(function(require, exports, module) {
         });
         
         register(null, {
-            myplugin: plugin
+            emmet: plugin
         });
     }
 });
