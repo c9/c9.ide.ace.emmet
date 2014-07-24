@@ -56,7 +56,7 @@ define(function(require, exports, module) {
             
             for (var i in keymap) {
                 commands.addCommand({
-                    name: i,
+                    name: "emmet_" + i,
                     action: i,
                     group: "emmet",
                     bindKey: keymap[i],
