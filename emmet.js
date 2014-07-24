@@ -32,7 +32,7 @@ define(function(require, exports, module) {
                 matching_pair:  {}, // {mac: "ctrl+alt+j", win: "alt+j"},
                 next_edit_point:  {}, // "alt+right",
                 prev_edit_point:  {}, // "alt+left",
-                toggle_comment: {mac: "command+/", win: "ctrl+/"},
+                toggle_comment: {}, // {mac: "command+/", win: "ctrl+/"},
                 split_join_tag:  {}, // {mac: "shift+command+'", win: "shift+ctrl+`"},
                 remove_tag:  {}, // {mac: "command+'", win: "shift+ctrl+;"},
                 evaluate_math_expression:  {mac: "shift+command+y", win: "shift+ctrl+y"},
