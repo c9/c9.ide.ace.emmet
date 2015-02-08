@@ -9,14 +9,12 @@
         "url": "http://github.com/c9/c9.ide.ace.emmet.git"
     },
     "plugins": {
-        "plugin": {
-            "emmet": {}
-        }
+        "emmet": {}
     },
     "categories": [
         "core"
     ],
     "licenses": [
-        ""
+        "MIT"
     ]
 }
