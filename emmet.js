@@ -91,7 +91,7 @@ define(function(require, exports, module) {
             if (event instanceof KeyboardEvent && (!editor.ace.isFocused()))
                 return false;
             
-            return emmetExt.isSupportedMode(editor.ace.session.$modeId);
+            return emmetExt.isSupportedMode(editor.ace.session.$mode);
         }
     
         function findEditor(editor) {
