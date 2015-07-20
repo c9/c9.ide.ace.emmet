@@ -79,10 +79,6 @@ define(function(require, exports, module) {
         
         /***** Methods *****/
         
-        function show() {
-            draw();
-        }
-        
         function isAvailable(editor, args, event) {
             if (!editor || !editor.ace) return false;
             
@@ -91,7 +87,7 @@ define(function(require, exports, module) {
             if (event instanceof KeyboardEvent && (!editor.ace.isFocused()))
                 return false;
             
-            return emmetExt.isSupportedMode(editor.ace.session.$mode);
+            return emmetExt.isAvailable(editor.ace, this.name);
         }
     
         function findEditor(editor) {
